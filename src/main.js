@@ -7,7 +7,7 @@ const m = canvas.getContext('2d')
 
 canvas.width = window.innerWidth
 canvas.height = window.innerHeight
-const gravity = 0.7
+const gravity = 0.9
 
 
 class Clayer {
@@ -73,7 +73,7 @@ class Player {
 class Platform {
     constructor() {
         this.position = {
-            x: 0,
+            x: 100,
             y: 500
 
         }
@@ -89,7 +89,8 @@ class Platform {
 const ber = new Clayer()
     // ber.position =
 const player = new Player()
-const platform = new Platform()
+
+const platforms = [new Platform()]
 const keys = {
     right: {
         pressed: false
@@ -119,30 +120,41 @@ function animate() {
     c.clearRect(0, 0, canvas.width, canvas.height)
     m.clearRect(0, 0, canvas.width, canvas.height)
     player.uptade()
-    platform.draw()
-        // ber.draw()
-        // ber.uptade()
+    platforms.forEach(platform => { platform.draw() })
+
+    // ber.draw()
+    // ber.uptade()
 
 
-    if (keys.right.pressed) {
+    if (keys.right.pressed && player.position.x < 400) {
         player.velocity.x = 2
-    } else if (keys.left.pressed) {
+    } else if (keys.left.pressed && player.position.x > 30) {
         player.velocity.x = -2
     } else if (
         keys.up.pressed) {
         player.velocity.y = -7
     } else if (
         keys.down.pressed) { player.velocity.y = 1 } else { player.velocity.x = 0 }
-
-    if (player.position.y + player.height + player.velocity.y >= platform.position.y + platform.height - 50) { player.velocity.y = 0 }
-    if (player.position.x + player.width >= platform.position.x + platform.width + 45) { player.velocity.y = 2 }
-
-    ccordinate()
+    if (keys.right.pressed) {
+        platforms.forEach(platform => { platform.position.x += +2 })
+    } else if (keys.left.pressed) {
+        platforms.forEach(platform => { platform.postions.x += -2 })
+    }
 }
 
+platforms.forEach(platform => {
+
+    if (player.position.y + player.height <= platform.position.y && player.position.y + player.height + player.velocity.y >= platform.position.y &&
+        player.position.x + player.width >= platform.position.x && player.position.x + player.width <= platform.position.x + platform.width + player.width && player.position.x + player.width <= platform.position.x) { player.velocity.y = 0 }
+})
 
 
-console.log(platform.position.x, platform.position.y)
+
+
+
+
+
+// console.log(platform.position.x, platform.position.y)
 
 
 
@@ -150,6 +162,7 @@ console.log(platform.position.x, platform.position.y)
 
 
 animate()
+
 
 
 window.addEventListener('keydown', ({ keyCode }) => {
@@ -177,8 +190,6 @@ window.addEventListener('keydown', ({ keyCode }) => {
 
     }
 
-})
-window.addEventListener('keyup', ({ keyCode }) => {
 
     switch (keyCode) {
         case 87:
